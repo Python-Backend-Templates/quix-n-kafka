@@ -1,0 +1,18 @@
+{
+    "type": "record",
+    "name": "Pong",
+    "fields": [
+        {
+            "name": "message",
+            "type": "string"
+        },
+        {
+            "name": "timestamp",
+            "type": "long"
+        }
+    ],
+    "namespace": "Pong.v1",
+    "aliases": [
+        "pong-v1"
+    ]
+}

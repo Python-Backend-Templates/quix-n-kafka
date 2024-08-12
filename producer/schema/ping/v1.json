@@ -1,0 +1,22 @@
+{
+    "type": "record",
+    "name": "Ping",
+    "fields": [
+        {
+            "name": "message",
+            "type": "string"
+        },
+        {
+            "name": "message_to_delete",
+            "type": "string"
+        },
+        {
+            "name": "timestamp",
+            "type": "long"
+        }
+    ],
+    "namespace": "Ping.v1",
+    "aliases": [
+        "ping-v1"
+    ]
+}

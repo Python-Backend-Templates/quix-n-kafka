@@ -1,0 +1,87 @@
+networks:
+  network:
+    name: ${PROJECT_NAME}-network
+
+services:
+  producer:
+    container_name: ${PROJECT_NAME}-producer
+    build:
+      context: ./producer/
+      dockerfile: Dockerfile.local
+    env_file:
+      - ./producer/.env
+    depends_on:
+      - zookeeper
+      - kafka
+      - schema-registry
+    networks:
+      - network
+    volumes:
+      - ./producer/:/apps/
+    restart: unless-stopped
+
+  consumer:
+    container_name: ${PROJECT_NAME}-consumer
+    build:
+      context: ./consumer/
+      dockerfile: Dockerfile.local
+    env_file:
+      - ./consumer/.env
+    depends_on:
+      - zookeeper
+      - kafka
+      - schema-registry
+    networks:
+      - network
+    volumes:
+      - ./consumer/:/apps/
+    restart: unless-stopped
+
+  zookeeper:
+    container_name: ${PROJECT_NAME}-zookeeper
+    hostname: ${ZOOKEEPER_HOST}
+    image: confluentinc/cp-zookeeper:7.5.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: ${ZOOKEEPER_CLIENT_PORT}
+      ZOOKEEPER_TICK_TIME: ${ZOOKEEPER_TICK_TIME}
+    expose:
+      - ${ZOOKEEPER_CLIENT_PORT}
+    networks:
+      - network
+    restart: unless-stopped
+
+  schema-registry:
+    container_name: ${PROJECT_NAME}-schema-registry
+    hostname: ${SCHEMA_REGISTRY_HOST}
+    image: confluentinc/cp-schema-registry:7.5.0
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: ${SCHEMA_REGISTRY_HOST}
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: ${ZOOKEEPER_CONNECTION_URL}
+      SCHEMA_REGISTRY_LISTENERS: ${SCHEMA_REGISTRY_LISTENERS}
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: ${SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS}
+      SCHEMA_REGISTRY_DEBUG: ${SCHEMA_REGISTRY_DEBUG}
+    depends_on:
+      - kafka
+    expose:
+      - ${SCHEMA_REGISTRY_PORT}
+    networks:
+      - network
+    restart: unless-stopped
+
+  kafka:
+    container_name: ${PROJECT_NAME}-kafka
+    hostname: ${KAFKA_HOST}
+    image: confluentinc/cp-kafka:7.5.0
+    environment:
+      KAFKA_BROKER_ID: ${KAFKA_BROKER_ID}
+      KAFKA_ZOOKEEPER_CONNECT: ${ZOOKEEPER_CONNECTION_URL}
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: ${KAFKA_LISTENER_SECURITY_PROTOCOL_MAP}
+      KAFKA_ADVERTISED_LISTENERS: ${KAFKA_ADVERTISED_LISTENERS}
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: ${KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR}
+    expose:
+      - ${KAFKA_PORT}
+    depends_on:
+      - zookeeper
+    networks:
+      - network
+    restart: unless-stopped
