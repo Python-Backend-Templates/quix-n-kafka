@@ -10,4 +10,4 @@ set -o pipefail
 set -o nounset
 
 echo "[RUN SERVER]"
-watchmedo auto-restart --recursive --pattern="*.py" --directory="/apps/" python -- -m main
+cd /apps/ && watchmedo auto-restart --recursive --pattern="*.py" --directory="/apps/" python -- -m main

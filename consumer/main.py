@@ -2,7 +2,8 @@ import os
 
 from quixstreams import Application
 
-from schema import Ping, Pong
+from schema.ping.v1 import Ping
+from schema.pong.v1 import Pong
 
 
 DEBUG = bool(int(os.environ.get("DEBUG", 0)))

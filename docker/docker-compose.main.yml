@@ -1,0 +1,31 @@
+networks:
+  network:
+    name: ${PROJECT_NAME}-network
+
+services:
+  zookeeper:
+    extends:
+      file: docker-compose.yml
+      service: zookeeper
+
+  kafka:
+    extends:
+      file: docker-compose.yml
+      service: kafka
+
+  schema-registry:
+    extends:
+      file: docker-compose.yml
+      service: schema-registry
+
+  producer:
+    extends:
+      file: docker-compose.yml
+      service: producer
+    image: ${REGISTRY}/producer:${CI_COMMIT_TAG:-latest}
+
+  consumer:
+    extends:
+      file: docker-compose.yml
+      service: consumer
+    image: ${REGISTRY}/consumer:${CI_COMMIT_TAG:-latest}

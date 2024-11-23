@@ -4,23 +4,27 @@ worker=example.app
 partitions=4
 
 localup:
-	docker compose -f docker-compose.local.yml up --remove-orphans
+	docker compose -f docker/docker-compose.local.yml up --remove-orphans
 localbuild:
-	docker compose -f docker-compose.local.yml build --no-cache
+	docker compose -f docker/docker-compose.local.yml build --no-cache
 developup:
-	docker compose -f docker-compose.develop.yml up --remove-orphans
+	docker compose -f docker/docker-compose.yml up --remove-orphans
 developbuild:
-	docker compose -f docker-compose.develop.yml build --no-cache
+	docker compose -f docker/docker-compose.yml build --no-cache
+mainup:
+	docker compose -f docker/docker-compose.main.yml up --remove-orphans
+mainbuild:
+	docker compose -f docker/docker-compose.main.yml build --no-cache
 test:
-	docker exec -it $(PROJECT_NAME)-consumer pytest .
+	docker exec -it $(PROJECT_NAME)-$(SERVICE) pytest .
 flake8:
-	docker exec -it $(PROJECT_NAME)-consumer flake8 .
+	docker exec -it $(PROJECT_NAME)-$(SERVICE) flake8 .
 mypy:
-	docker exec -it $(PROJECT_NAME)-consumer mypy .
+	docker exec -it $(PROJECT_NAME)-$(SERVICE) mypy .
 black:
-	docker exec -it $(PROJECT_NAME)-consumer black .
+	docker exec -it $(PROJECT_NAME)-$(SERVICE) black .
 isort:
-	docker exec -it $(PROJECT_NAME)-consumer isort . --profile black --filter-files
+	docker exec -it $(PROJECT_NAME)-$(SERVICE) isort . --profile black --filter-files
 
 # Kafka related
 create-topic:
